@@ -1,3 +1,5 @@
+import json
+
 from flask import Flask, jsonify, request
 from flask_sqlalchemy import SQLAlchemy
 from utils import load_users, load_offers, load_orders
@@ -232,28 +234,20 @@ def delete_user(id):
 @app.route('/order', methods=["POST"])
 def add_order():
     """Создаем заказ"""
-    name = request.args['name']
-    description = request.args['description']
-    start_date = request.args['start_date']
-    end_date = request.args['end_date']
-    address = request.args['address']
-    price = request.args['price']
-    customer_id = request.args['customer_id']
-    executor_id = request.args['executor_id']
+    if request.method == "POST":
+        user_data = json.loads(request.data)
+        new_user = User(
+            id=user_data["id"],
+            first_name=user_data["first_name"],
+            last_name=user_data["last_name"],
+            age=user_data["age"],
+            email=user_data["email"],
+            role=user_data["role"],
+            phone=user_data["phone"],
+        )
+        db.session.add(new_user)
 
-    order_new = Order(name=name,
-                      description=description,
-                      start_date=start_date,
-                      end_date=end_date,
-                      address=address,
-                      price=price,
-                      customer_id=customer_id,
-                      executor_id=executor_id
-                      )
 
-    db.session.add(order_new)
-    db.session.commit()
-    return f'Заказ {name} добавлен'
 
 
 @app.route('/order/<int:id>', methods=["PUT"])
