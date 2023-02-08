@@ -176,25 +176,21 @@ def get_chose_order(id):
 
 
 @app.route('/users', methods=["POST"])
-def add_user():
+def add_user(last_name=None, first_name=None):
     """Создаем пользователя"""
-    first_name = request.args['first_name']
-    last_name = request.args['last_name']
-    age = request.args['age']
-    email = request.args['email']
-    role = request.args['role']
-    phone = request.args['phone']
+    if request.method == "POST":
+        user_data = json.loads(request.data)
+        new_user = User(
+            id=user_data["id"],
+            first_name=user_data["first_name"],
+            last_name=user_data["last_name"],
+            age=user_data["age"],
+            email=user_data["email"],
+            role=user_data["role"],
+            phone=user_data["phone"],
+        )
+        db.session.add(new_user)
 
-    user_new = User(firs_name=first_name,
-                    last_name=last_name,
-                    age=age,
-                    email=email,
-                    role=role,
-                    phone=phone
-                    )
-
-    db.session.add(user_new)
-    db.session.commit()
     return f'Пользователь {first_name} {last_name} добавлен'
 
 
@@ -234,20 +230,28 @@ def delete_user(id):
 @app.route('/order', methods=["POST"])
 def add_order():
     """Создаем заказ"""
-    if request.method == "POST":
-        user_data = json.loads(request.data)
-        new_user = User(
-            id=user_data["id"],
-            first_name=user_data["first_name"],
-            last_name=user_data["last_name"],
-            age=user_data["age"],
-            email=user_data["email"],
-            role=user_data["role"],
-            phone=user_data["phone"],
-        )
-        db.session.add(new_user)
+    name = request.args['name']
+    description = request.args['description']
+    start_date = request.args['start_date']
+    end_date = request.args['end_date']
+    address = request.args['address']
+    price = request.args['price']
+    customer_id = request.args['customer_id']
+    executor_id = request.args['executor_id']
 
+    order_new = Order(name=name,
+                      description=description,
+                      start_date=start_date,
+                      end_date=end_date,
+                      address=address,
+                      price=price,
+                      customer_id=customer_id,
+                      executor_id=executor_id
+                      )
 
+    db.session.add(order_new)
+    db.session.commit()
+    return f'Заказ {name} добавлен'
 
 
 @app.route('/order/<int:id>', methods=["PUT"])
