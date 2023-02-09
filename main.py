@@ -190,6 +190,7 @@ def add_user(last_name=None, first_name=None):
             phone=user_data["phone"],
         )
         db.session.add(new_user)
+        db.session.commit()
 
     return f'Пользователь {first_name} {last_name} добавлен'
 
@@ -197,25 +198,22 @@ def add_user(last_name=None, first_name=None):
 @app.route('/users/<int:id>', methods=["PUT"])
 def update_user(id):
     """Обновляем пользователя"""
-    user = User.query.get(id)
+    order_data = json.loads(request.data)
 
-    first_name = request.args['first_name']
-    last_name = request.args['last_name']
-    age = request.args['age']
-    email = request.args['email']
-    role = request.args['role']
-    phone = request.args['phone']
+    if request.method == 'PUT':
+        order_data = json.loads(request.data)
+        order.name = order_data['name']
+        order.description = order_data['description']
+        order.start_date = order_data['start_date']
+        order.end_date = order_data['end_date']
+        order.price = order_data['price']
+        order.customer_id = order_data['customer_id']
+        order.executor_id = order_data['executor_id']
+        db.session.add(order)
+        db.session.commit()
+        return '', 204
 
-    user.firs_name = first_name
-    user.last_name = last_name
-    user.age = age
-    user.email = email
-    user.role = role
-    user.phone = phone
 
-    db.session.add(user)
-    db.session.commit()
-    return f'Пользователь {id} обновлен на {first_name} {last_name}'
 
 
 @app.route('/users/<int:id>', methods=["DELETE"])
