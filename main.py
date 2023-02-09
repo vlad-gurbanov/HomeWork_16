@@ -228,14 +228,15 @@ def delete_user(id):
 @app.route('/order', methods=["POST"])
 def add_order():
     """Создаем заказ"""
-    name = request.args['name']
-    description = request.args['description']
-    start_date = request.args['start_date']
-    end_date = request.args['end_date']
-    address = request.args['address']
-    price = request.args['price']
-    customer_id = request.args['customer_id']
-    executor_id = request.args['executor_id']
+    data = json.loads(request.data)
+    name = request.data['name']
+    description = request.data['description']
+    start_date = request.data['start_date']
+    end_date = request.data['end_date']
+    address = request.data['address']
+    price = request.data['price']
+    customer_id = request.data['customer_id']
+    executor_id = request.data['executor_id']
 
     order_new = Order(name=name,
                       description=description,
@@ -292,8 +293,8 @@ def delete_order(id):
 @app.route('/offer', methods=["POST"])
 def add_offer():
     """Создаем offer"""
-    order_id = request.args['order_id']
-    executor_id = request.args['executor_id']
+    order_id = request.data['order_id']
+    executor_id = request.data['executor_id']
 
     offer_new = Offer(order_id=order_id, executor_id=executor_id)
 
